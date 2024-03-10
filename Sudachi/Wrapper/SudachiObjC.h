@@ -39,13 +39,17 @@ typedef NS_ENUM(NSUInteger, SudachiVirtualControllerButtonType) {
 @property (nonatomic, strong) SudachiGameInformation *gameInformation;
 
 +(SudachiObjC *) sharedInstance NS_SWIFT_NAME(shared());
--(void) configureLayer:(CAMetalLayer *)layer NS_SWIFT_NAME(configure(layer:));
+-(void) configureLayer:(CAMetalLayer *)layer withSize:(CGSize)size NS_SWIFT_NAME(configure(layer:with:));
+-(void) bootOS;
 -(void) insertGame:(NSURL *)url NS_SWIFT_NAME(insert(game:));
+-(void) insertGames:(NSArray<NSURL *> *)games NS_SWIFT_NAME(insert(games:));
 -(void) step;
 
 -(void) touchBeganAtPoint:(CGPoint)point index:(NSUInteger)index NS_SWIFT_NAME(touchBegan(at:for:));
 -(void) touchEndedForIndex:(NSUInteger)index;
 -(void) touchMovedAtPoint:(CGPoint)point index:(NSUInteger)index NS_SWIFT_NAME(touchMoved(at:for:));
+
+-(void) thumbstickMoved:(SudachiVirtualControllerButtonType)button x:(CGFloat)x y:(CGFloat)y;
 
 -(void) virtualControllerButtonDown:(SudachiVirtualControllerButtonType)button;
 -(void) virtualControllerButtonUp:(SudachiVirtualControllerButtonType)button;

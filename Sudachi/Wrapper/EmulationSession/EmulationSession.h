@@ -54,7 +54,8 @@ public:
     Core::SystemResultStatus InitializeEmulation(const std::string& filepath,
                                                  const std::size_t program_index,
                                                  const bool frontend_initiated);
-
+    Core::SystemResultStatus BootOS();
+    
     static void OnEmulationStarted();
     static u64 GetProgramId(std::string programId);
     bool IsInitialized() { return is_initialized; };

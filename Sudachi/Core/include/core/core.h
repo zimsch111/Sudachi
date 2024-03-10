@@ -204,7 +204,7 @@ public:
      * @param emu_window Reference to the host-system window used for video output and keyboard
      *                   input.
      * @param filepath String path to the executable application to load on the host file system.
-     * @param program_index Specifies the index within the container of the program to launch.
+     * @param params 
      * @returns SystemResultStatus code, indicating if the operation succeeded.
      */
     [[nodiscard]] SystemResultStatus Load(Frontend::EmuWindow& emu_window,

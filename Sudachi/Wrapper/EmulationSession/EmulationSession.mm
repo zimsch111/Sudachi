@@ -250,6 +250,65 @@ Core::SystemResultStatus EmulationSession::InitializeEmulation(const std::string
     return Core::SystemResultStatus::Success;
 }
 
+Core::SystemResultStatus EmulationSession::BootOS() {
+    std::scoped_lock lock(m_mutex);
+
+    // Create the render window.
+    m_window = std::make_unique<EmulationWindow>(&m_input_subsystem, m_native_window, m_size, m_vulkan_library);
+
+    // Initialize system.
+    m_system.SetShuttingDown(false);
+    m_system.ApplySettings();
+    YuzuSettings::LogSettings();
+    m_system.HIDCore().ReloadInputDevices();
+    m_system.SetFrontendAppletSet({
+        nullptr,                     // Amiibo Settings
+        nullptr,                     // Controller Selector
+        nullptr,                     // Error Display
+        nullptr,                     // Mii Editor
+        nullptr,                     // Parental Controls
+        nullptr,                     // Photo Viewer
+        nullptr,                     // Profile Selector
+        nullptr, // std::move(android_keyboard), // Software Keyboard
+        nullptr,                     // Web Browser
+    });
+
+    constexpr u64 QLaunchId = static_cast<u64>(Service::AM::AppletProgramId::QLaunch);
+    auto bis_system = m_system.GetFileSystemController().GetSystemNANDContents();
+
+    auto qlaunch_applet_nca = bis_system->GetEntry(QLaunchId, FileSys::ContentRecordType::Program);
+
+    m_system.GetFrontendAppletHolder().SetCurrentAppletId(Service::AM::AppletId::QLaunch);
+
+    const auto filename = qlaunch_applet_nca->GetFullPath();
+    
+    auto params = Service::AM::FrontendAppletParameters {
+        .program_id = QLaunchId,
+        .applet_id = Service::AM::AppletId::QLaunch,
+        .applet_type = Service::AM::AppletType::LibraryApplet
+    };
+    
+    m_load_result = m_system.Load(EmulationSession::GetInstance().Window(), filename, params);
+    
+    if (m_load_result != Core::SystemResultStatus::Success) {
+        return m_load_result;
+    }
+
+    // Complete initialization.
+    m_system.GPU().Start();
+    m_system.GetCpuManager().OnGpuReady();
+    m_system.RegisterExitCallback([&] { HaltEmulation(); });
+
+    // Register an ExecuteProgram callback such that Core can execute a sub-program
+    m_system.RegisterExecuteProgramCallback([&](std::size_t program_index_) {
+        m_next_program_index = program_index_;
+        EmulationSession::GetInstance().HaltEmulation();
+    });
+
+    OnEmulationStarted();
+    return Core::SystemResultStatus::Success;
+}
+
 void EmulationSession::ShutdownEmulation() {
     std::scoped_lock lock(m_mutex);
 

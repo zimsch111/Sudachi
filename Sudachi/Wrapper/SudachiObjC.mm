@@ -28,8 +28,10 @@
         EmulationSession::GetInstance().InitializeGpuDriver();
         
         YuzuSettings::values.use_asynchronous_shaders.SetValue(true);
-        YuzuSettings::values.astc_recompression.SetValue(YuzuSettings::AstcRecompression::Bc1);
+        YuzuSettings::values.astc_recompression.SetValue(YuzuSettings::AstcRecompression::Uncompressed);
         YuzuSettings::values.shader_backend.SetValue(YuzuSettings::ShaderBackend::SpirV);
+        YuzuSettings::values.resolution_setup.SetValue(YuzuSettings::ResolutionSetup::Res2X);
+        YuzuSettings::values.scaling_filter.SetValue(YuzuSettings::ScalingFilter::ScaleForce);
     } return self;
 }
 
@@ -42,12 +44,22 @@
     return sharedInstance;
 }
 
--(void) configureLayer:(CAMetalLayer *)layer {
-    EmulationSession::GetInstance().SetNativeWindow((__bridge CA::MetalLayer*)layer, layer.frame.size);
+-(void) configureLayer:(CAMetalLayer *)layer withSize:(CGSize)size {
+    EmulationSession::GetInstance().SetNativeWindow((__bridge CA::MetalLayer*)layer, size);
+}
+
+-(void) bootOS {
+    EmulationSession::GetInstance().BootOS();
 }
 
 -(void) insertGame:(NSURL *)url {
     EmulationSession::GetInstance().InitializeEmulation([url.path UTF8String], [_gameInformation informationForGame:url].programID, true);
+}
+
+-(void) insertGames:(NSArray<NSURL *> *)games {
+    for (NSURL *url in games) {
+        EmulationSession::GetInstance().ConfigureFilesystemProvider([url.path UTF8String]);
+    }
 }
 
 -(void) step {
@@ -55,16 +67,22 @@
 }
 
 -(void) touchBeganAtPoint:(CGPoint)point index:(NSUInteger)index {
-    EmulationSession::GetInstance().Window().OnTouchPressed(index, point.x, point.y);
+    EmulationSession::GetInstance().Window().OnTouchPressed([[NSNumber numberWithUnsignedInteger:index] intValue], point.x, point.y);
 }
 
 -(void) touchEndedForIndex:(NSUInteger)index {
-    EmulationSession::GetInstance().Window().OnTouchReleased(index);
+    EmulationSession::GetInstance().Window().OnTouchReleased([[NSNumber numberWithUnsignedInteger:index] intValue]);
 }
 
 -(void) touchMovedAtPoint:(CGPoint)point index:(NSUInteger)index {
-    EmulationSession::GetInstance().Window().OnTouchMoved(index, point.x, point.y);
+    EmulationSession::GetInstance().Window().OnTouchMoved([[NSNumber numberWithUnsignedInteger:index] intValue], point.x, point.y);
 }
+
+-(void) thumbstickMoved:(SudachiVirtualControllerButtonType)button x:(CGFloat)x y:(CGFloat)y {
+    EmulationSession::GetInstance().OnGamepadConnectEvent(0);
+    EmulationSession::GetInstance().Window().OnGamepadJoystickEvent(0, [[NSNumber numberWithUnsignedInteger:button] intValue], CGFloat(x), CGFloat(y));
+}
+
 
 -(void) virtualControllerButtonDown:(SudachiVirtualControllerButtonType)button {
     EmulationSession::GetInstance().OnGamepadConnectEvent(0);

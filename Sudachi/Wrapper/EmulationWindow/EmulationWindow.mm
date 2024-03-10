@@ -8,6 +8,8 @@
 #import "EmulationWindow.h"
 #import "../EmulationSession/EmulationSession.h"
 
+#import <UIKit/UIKit.h>
+
 #include <SDL.h>
 
 #include "common/logging/log.h"
@@ -26,6 +28,7 @@ void EmulationWindow::OnSurfaceChanged(CA::MetalLayer* surface, CGSize size) {
     UpdateCurrentFramebufferLayout(m_window_width, m_window_height);
 
     window_info.render_surface = reinterpret_cast<void*>(surface);
+    window_info.render_surface_scale = [[UIScreen mainScreen] nativeScale];
 }
 
 void EmulationWindow::OnTouchPressed(int id, float x, float y) {
@@ -75,6 +78,7 @@ EmulationWindow::EmulationWindow(InputCommon::InputSubsystem* input_subsystem, C
     }
 
     OnSurfaceChanged(surface, m_size);
+    window_info.render_surface_scale = [[UIScreen mainScreen] nativeScale];
     window_info.type = Core::Frontend::WindowSystemType::Cocoa;
     
     m_input_subsystem->Initialize();

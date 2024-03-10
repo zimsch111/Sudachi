@@ -27,21 +27,21 @@ void AdpcmDataSourceVersion1Command::Process(const AudioRenderer::CommandListPro
     }
 
     DecodeFromWaveBuffersArgs args{
-        .sample_format{SampleFormat::Adpcm},
-        .output{out_buffer},
-        .voice_state{reinterpret_cast<VoiceState*>(voice_state)},
-        .wave_buffers{wave_buffers},
-        .channel{0},
-        .channel_count{1},
-        .src_quality{src_quality},
-        .pitch{pitch},
-        .source_sample_rate{sample_rate},
-        .target_sample_rate{processor.target_sample_rate},
-        .sample_count{processor.sample_count},
-        .data_address{data_address},
-        .data_size{data_size},
-        .IsVoicePlayedSampleCountResetAtLoopPointSupported{(flags & 1) != 0},
-        .IsVoicePitchAndSrcSkippedSupported{(flags & 2) != 0},
+        SampleFormat::Adpcm,
+        out_buffer,
+        reinterpret_cast<VoiceState*>(voice_state),
+        wave_buffers,
+        0,
+        1,
+        src_quality,
+        pitch,
+        sample_rate,
+        processor.target_sample_rate,
+        processor.sample_count,
+        data_address,
+        data_size,
+        (flags & 1) != 0,
+        (flags & 2) != 0,
     };
 
     DecodeFromWaveBuffers(*processor.memory, args);
@@ -63,21 +63,21 @@ void AdpcmDataSourceVersion2Command::Process(const AudioRenderer::CommandListPro
                                                   processor.sample_count)};
 
     DecodeFromWaveBuffersArgs args{
-        .sample_format{SampleFormat::Adpcm},
-        .output{out_buffer},
-        .voice_state{reinterpret_cast<VoiceState*>(voice_state)},
-        .wave_buffers{wave_buffers},
-        .channel{0},
-        .channel_count{1},
-        .src_quality{src_quality},
-        .pitch{pitch},
-        .source_sample_rate{sample_rate},
-        .target_sample_rate{processor.target_sample_rate},
-        .sample_count{processor.sample_count},
-        .data_address{data_address},
-        .data_size{data_size},
-        .IsVoicePlayedSampleCountResetAtLoopPointSupported{(flags & 1) != 0},
-        .IsVoicePitchAndSrcSkippedSupported{(flags & 2) != 0},
+        SampleFormat::Adpcm,
+        out_buffer,
+        reinterpret_cast<VoiceState*>(voice_state),
+        wave_buffers,
+        0,
+        1,
+        src_quality,
+        pitch,
+        sample_rate,
+        processor.target_sample_rate,
+        processor.sample_count,
+        data_address,
+        data_size,
+        (flags & 1) != 0,
+        (flags & 2) != 0
     };
 
     DecodeFromWaveBuffers(*processor.memory, args);

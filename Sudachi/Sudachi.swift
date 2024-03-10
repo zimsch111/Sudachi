@@ -13,8 +13,8 @@ public struct Sudachi {
     
     fileprivate let sudachiObjC = SudachiObjC.shared()
     
-    public func configure(layer: CAMetalLayer) {
-        sudachiObjC.configure(layer: layer)
+    public func configure(layer: CAMetalLayer, with size: CGSize) {
+        sudachiObjC.configure(layer: layer, with: size)
     }
     
     public func information(for url: URL) -> SudachiInformation {
@@ -23,6 +23,14 @@ public struct Sudachi {
     
     public func insert(game url: URL) {
         sudachiObjC.insert(game: url)
+    }
+    
+    public func insert(games urls: [URL]) {
+        sudachiObjC.insert(games: urls)
+    }
+    
+    public func bootOS() {
+        sudachiObjC.bootOS()
     }
     
     public func step() {
@@ -43,6 +51,10 @@ public struct Sudachi {
     
     public func touchMoved(at point: CGPoint, for index: UInt) {
         sudachiObjC.touchMoved(at: point, for: index)
+    }
+    
+    public func thumbstickMoved(_ button: SudachiVirtualControllerButtonType, x: Float, y: Float) {
+        sudachiObjC.thumbstickMoved(button, x: CGFloat(x), y: CGFloat(y))
     }
     
     public func virtualControllerButtonDown(_ button: SudachiVirtualControllerButtonType) {

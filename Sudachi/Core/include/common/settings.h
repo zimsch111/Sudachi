@@ -357,7 +357,7 @@ struct YuzuValues {
         linkage, 0, "bg_blue", Category::Renderer, Specialization::Default, true, true};
 
     SwitchableSetting<GpuAccuracy, true> gpu_accuracy{linkage,
-#if defined(ANDROID) || defined(TARGET_OS_IPHONE)
+#if defined(ANDROID) // || defined(TARGET_OS_IPHONE)
                                                       GpuAccuracy::Normal,
 #else
                                                       GpuAccuracy::High,
@@ -478,7 +478,7 @@ struct YuzuValues {
     Setting<s32> current_user{linkage, 0, "current_user", Category::System};
 
     SwitchableSetting<ConsoleMode> use_docked_mode{linkage,
-#if defined(ANDROID) || defined(TARGET_OS_IPHONE)
+#if defined(ANDROID)// || defined(TARGET_OS_IPHONE)
                                                    ConsoleMode::Handheld,
 #else
                                                    ConsoleMode::Docked,
