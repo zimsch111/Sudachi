@@ -9,6 +9,7 @@
 
 #import <Metal/Metal.hpp>
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 #include <memory>
 #include <span>
@@ -42,6 +43,7 @@ public:
     ~EmulationWindow() = default;
 
     void OnSurfaceChanged(CA::MetalLayer* surface, CGSize size);
+    void OrientationChanged(UIInterfaceOrientation orientation);
     void OnFrameDisplayed() override;
 
     void OnTouchPressed(int id, float x, float y);
@@ -63,6 +65,7 @@ private:
     float m_window_width{};
     float m_window_height{};
     CGSize m_size;
+    bool is_portrait = true;
 
     InputCommon::InputSubsystem* m_input_subsystem{};
     std::shared_ptr<Common::DynamicLibrary> m_driver_library;

@@ -15,7 +15,8 @@
 #define VK_USE_PLATFORM_WAYLAND_KHR
 #endif
 
-#include <vulkan/vulkan.h>
+#include <MoltenVK/mvk_vulkan.h>
+// #include <vulkan/vulkan.h>
 
 // Sanitize macros
 #undef CreateEvent

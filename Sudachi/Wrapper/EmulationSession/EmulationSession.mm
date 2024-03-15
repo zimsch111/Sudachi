@@ -108,7 +108,7 @@ void EmulationSession::SetNativeWindow(CA::MetalLayer* native_window, CGSize siz
 }
 
 void EmulationSession::InitializeGpuDriver() {
-    m_vulkan_library = std::make_shared<Common::DynamicLibrary>(dlopen("@executable_path/Frameworks/libMoltenVK.dylib", RTLD_NOW));
+    m_vulkan_library = std::make_shared<Common::DynamicLibrary>(dlopen("@executable_path/Frameworks/MoltenVK", RTLD_NOW));
 }
 
 bool EmulationSession::IsRunning() const {
@@ -239,6 +239,12 @@ Core::SystemResultStatus EmulationSession::InitializeEmulation(const std::string
     m_system.GPU().Start();
     m_system.GetCpuManager().OnGpuReady();
     m_system.RegisterExitCallback([&] { HaltEmulation(); });
+    
+    if (YuzuSettings::values.use_disk_shader_cache.GetValue()) {
+        m_system.Renderer().ReadRasterizer()->LoadDiskResources(
+                                                              m_system.GetApplicationProcessProgramID(), std::stop_token{},
+                                                              [](VideoCore::LoadCallbackStage, size_t value, size_t total) {});
+    }
 
     // Register an ExecuteProgram callback such that Core can execute a sub-program
     m_system.RegisterExecuteProgramCallback([&](std::size_t program_index_) {
@@ -298,6 +304,12 @@ Core::SystemResultStatus EmulationSession::BootOS() {
     m_system.GPU().Start();
     m_system.GetCpuManager().OnGpuReady();
     m_system.RegisterExitCallback([&] { HaltEmulation(); });
+    
+    if (YuzuSettings::values.use_disk_shader_cache.GetValue()) {
+        m_system.Renderer().ReadRasterizer()->LoadDiskResources(
+                                                              m_system.GetApplicationProcessProgramID(), std::stop_token{},
+                                                              [](VideoCore::LoadCallbackStage, size_t value, size_t total) {});
+    }
 
     // Register an ExecuteProgram callback such that Core can execute a sub-program
     m_system.RegisterExecuteProgramCallback([&](std::size_t program_index_) {

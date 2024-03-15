@@ -381,7 +381,6 @@ GameMetadata CacheGameMetadata(const std::string& path) {
 
 GameMetadata GameMetadata(const std::string& path, bool reload = false) {
     if (!EmulationSession::GetInstance().IsInitialized()) {
-        SdlConfig confi{std::string(DirectoryManager::SudachiDirectory()) + "/config/config.ini"};
         Common::FS::SetAppDirectory(DirectoryManager::SudachiDirectory());
         
         EmulationSession::GetInstance().System().Initialize();

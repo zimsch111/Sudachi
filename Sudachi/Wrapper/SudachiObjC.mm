@@ -7,6 +7,7 @@
 
 #import "SudachiObjC.h"
 
+#import "Config/Config.h"
 #import "EmulationSession/EmulationSession.h"
 #import "DirectoryManager/DirectoryManager.h"
 
@@ -22,16 +23,17 @@
         _gameInformation = [SudachiGameInformation sharedInstance];
         
         Common::FS::SetAppDirectory(DirectoryManager::SudachiDirectory());
+        Config{"config", Config::ConfigType::GlobalConfig};
         
         EmulationSession::GetInstance().System().Initialize();
         EmulationSession::GetInstance().InitializeSystem(false);
         EmulationSession::GetInstance().InitializeGpuDriver();
         
-        YuzuSettings::values.use_asynchronous_shaders.SetValue(true);
-        YuzuSettings::values.astc_recompression.SetValue(YuzuSettings::AstcRecompression::Uncompressed);
-        YuzuSettings::values.shader_backend.SetValue(YuzuSettings::ShaderBackend::SpirV);
-        YuzuSettings::values.resolution_setup.SetValue(YuzuSettings::ResolutionSetup::Res2X);
-        YuzuSettings::values.scaling_filter.SetValue(YuzuSettings::ScalingFilter::ScaleForce);
+        // YuzuSettings::values.use_asynchronous_shaders.SetValue(true);
+        // YuzuSettings::values.astc_recompression.SetValue(YuzuSettings::AstcRecompression::Bc3);
+        // YuzuSettings::values.shader_backend.SetValue(YuzuSettings::ShaderBackend::SpirV);
+        // YuzuSettings::values.resolution_setup.SetValue(YuzuSettings::ResolutionSetup::Res1X);
+        // YuzuSettings::values.scaling_filter.SetValue(YuzuSettings::ScalingFilter::Bilinear);
     } return self;
 }
 
@@ -45,6 +47,7 @@
 }
 
 -(void) configureLayer:(CAMetalLayer *)layer withSize:(CGSize)size {
+    _layer = layer;
     EmulationSession::GetInstance().SetNativeWindow((__bridge CA::MetalLayer*)layer, size);
 }
 
@@ -78,23 +81,26 @@
     EmulationSession::GetInstance().Window().OnTouchMoved([[NSNumber numberWithUnsignedInteger:index] intValue], point.x, point.y);
 }
 
--(void) thumbstickMoved:(SudachiVirtualControllerButtonType)button x:(CGFloat)x y:(CGFloat)y {
+-(void) thumbstickMoved:(VirtualControllerAnalogType)analog x:(CGFloat)x y:(CGFloat)y {
     EmulationSession::GetInstance().OnGamepadConnectEvent(0);
-    EmulationSession::GetInstance().Window().OnGamepadJoystickEvent(0, [[NSNumber numberWithUnsignedInteger:button] intValue], CGFloat(x), CGFloat(y));
+    EmulationSession::GetInstance().Window().OnGamepadJoystickEvent(0, [[NSNumber numberWithUnsignedInteger:analog] intValue], CGFloat(x), CGFloat(y));
 }
 
-
--(void) virtualControllerButtonDown:(SudachiVirtualControllerButtonType)button {
+-(void) virtualControllerButtonDown:(VirtualControllerButtonType)button {
     EmulationSession::GetInstance().OnGamepadConnectEvent(0);
     EmulationSession::GetInstance().Window().OnGamepadButtonEvent(0, [[NSNumber numberWithUnsignedInteger:button] intValue], true);
 }
 
--(void) virtualControllerButtonUp:(SudachiVirtualControllerButtonType)button {
+-(void) virtualControllerButtonUp:(VirtualControllerButtonType)button {
     EmulationSession::GetInstance().OnGamepadConnectEvent(0);
     EmulationSession::GetInstance().Window().OnGamepadButtonEvent(0, [[NSNumber numberWithUnsignedInteger:button] intValue], false);
 }
 
--(void) orientationChanged:(UIInterfaceOrientation)orientation {
-    // EmulationSession::GetInstance().Window().OrientationChanged(orientation);
+-(void) orientationChanged:(UIInterfaceOrientation)orientation with:(CAMetalLayer *)layer size:(CGSize)size {
+    EmulationSession::GetInstance().Window().OnSurfaceChanged((__bridge CA::MetalLayer*)layer, size);
+}
+
+-(void) settingsChanged {
+    Config{"config", Config::ConfigType::GlobalConfig};
 }
 @end

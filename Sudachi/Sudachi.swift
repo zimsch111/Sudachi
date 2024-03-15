@@ -37,8 +37,8 @@ public struct Sudachi {
         sudachiObjC.step()
     }
     
-    public func orientationChanged(orientation: UIInterfaceOrientation) {
-        // sudachiObjC.orientationChanged(orientation)
+    public func orientationChanged(orientation: UIInterfaceOrientation, with layer: CAMetalLayer, size: CGSize) {
+        sudachiObjC.orientationChanged(orientation: orientation, with: layer, size: size)
     }
     
     public func touchBegan(at point: CGPoint, for index: UInt) {
@@ -53,15 +53,19 @@ public struct Sudachi {
         sudachiObjC.touchMoved(at: point, for: index)
     }
     
-    public func thumbstickMoved(_ button: SudachiVirtualControllerButtonType, x: Float, y: Float) {
-        sudachiObjC.thumbstickMoved(button, x: CGFloat(x), y: CGFloat(y))
+    public func thumbstickMoved(_ analog: VirtualControllerAnalogType, x: Float, y: Float) {
+        sudachiObjC.thumbstickMoved(analog, x: CGFloat(x), y: CGFloat(y))
     }
     
-    public func virtualControllerButtonDown(_ button: SudachiVirtualControllerButtonType) {
+    public func virtualControllerButtonDown(_ button: VirtualControllerButtonType) {
         sudachiObjC.virtualControllerButtonDown(button)
     }
     
-    public func virtualControllerButtonUp(_ button: SudachiVirtualControllerButtonType) {
+    public func virtualControllerButtonUp(_ button: VirtualControllerButtonType) {
         sudachiObjC.virtualControllerButtonUp(button)
+    }
+    
+    public func settingsSaved() {
+        sudachiObjC.settingsChanged()
     }
 }
