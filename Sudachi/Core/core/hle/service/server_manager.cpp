@@ -126,9 +126,7 @@ Result ServerManager::RegisterSession(Kernel::KServerSession* server_session,
                                       std::shared_ptr<SessionRequestManager> manager) {
     // We are taking ownership of the server session, so don't open it.
     
-    auto session = std::make_unique<Session>(server_session, std::move(manager));
-    
-    // auto* session = new Session(server_session, std::move(manager));
+    auto* session = new Session(server_session, std::move(manager));
 
     // Begin tracking the server session.
     {
@@ -137,7 +135,7 @@ Result ServerManager::RegisterSession(Kernel::KServerSession* server_session,
     }
 
     // Register to wait on the session.
-    this->LinkToDeferredList(session.get());
+    this->LinkToDeferredList(session);
 
     R_SUCCEED();
 }
@@ -151,8 +149,7 @@ Result ServerManager::RegisterNamedService(const std::string& service_name,
                                                        max_sessions, handler_factory));
 
     // We are taking ownership of the server port, so don't open it.
-    auto server = std::make_unique<Port>(server_port, std::move(handler_factory));
-    // auto* server = new Port(server_port, std::move(handler_factory));
+    auto* server = new Port(server_port, std::move(handler_factory));
 
     // Begin tracking the server port.
     {
@@ -161,7 +158,7 @@ Result ServerManager::RegisterNamedService(const std::string& service_name,
     }
 
     // Register to wait on the server port.
-    this->LinkToDeferredList(server.get());
+    this->LinkToDeferredList(server);
 
     R_SUCCEED();
 }
@@ -200,8 +197,7 @@ Result ServerManager::ManageNamedPort(const std::string& service_name,
     port->GetServerPort().Open();
 
     // Transfer ownership into a new port object.
-    auto server = std::make_unique<Port>(std::addressof(port->GetServerPort()), std::move(handler_factory));
-    // auto* server = new Port(std::addressof(port->GetServerPort()), std::move(handler_factory));
+    auto* server = new Port(std::addressof(port->GetServerPort()), std::move(handler_factory));
 
     // Begin tracking the port.
     {
@@ -210,7 +206,7 @@ Result ServerManager::ManageNamedPort(const std::string& service_name,
     }
 
     // Register to wait on the port.
-    this->LinkToDeferredList(server.get());
+    this->LinkToDeferredList(server);
 
     // We succeeded.
     R_SUCCEED();

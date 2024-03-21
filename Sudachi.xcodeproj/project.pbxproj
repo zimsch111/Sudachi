@@ -1070,6 +1070,7 @@
 		E6ABB2A02B958F7500DF6F2A /* SudachiObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = E6ABB29A2B958F7500DF6F2A /* SudachiObjC.mm */; };
 		E6ABB2D72B95A29800DF6F2A /* libzstd in Frameworks */ = {isa = PBXBuildFile; productRef = E6ABB2D62B95A29800DF6F2A /* libzstd */; };
 		E6AEBA232B95B6C4005E8433 /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = E6AEBA222B95B6C4005E8433 /* OpenSSL */; };
+		E6CB2E162BAC097D00F90706 /* lz4 in Frameworks */ = {isa = PBXBuildFile; productRef = E6CB2E152BAC097D00F90706 /* lz4 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -2168,6 +2169,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6CB2E162BAC097D00F90706 /* lz4 in Frameworks */,
 				E6AEBA232B95B6C4005E8433 /* OpenSSL in Frameworks */,
 				E6ABB2D72B95A29800DF6F2A /* libzstd in Frameworks */,
 			);
@@ -4845,6 +4847,7 @@
 			packageProductDependencies = (
 				E6ABB2D62B95A29800DF6F2A /* libzstd */,
 				E6AEBA222B95B6C4005E8433 /* OpenSSL */,
+				E6CB2E152BAC097D00F90706 /* lz4 */,
 			);
 			productName = Sudachi;
 			productReference = E63583612B95822D00D35422 /* libSudachi.a */;
@@ -4877,6 +4880,7 @@
 			packageReferences = (
 				E6ABB2D52B95A29800DF6F2A /* XCRemoteSwiftPackageReference "zstd" */,
 				E6AEBA212B95B6C4005E8433 /* XCRemoteSwiftPackageReference "OpenSSL" */,
+				E6CB2E142BAC097D00F90706 /* XCRemoteSwiftPackageReference "lz4-spm" */,
 			);
 			productRefGroup = E63583622B95822D00D35422 /* Products */;
 			projectDirPath = "";
@@ -6236,6 +6240,14 @@
 				minimumVersion = 3.1.4000;
 			};
 		};
+		E6CB2E142BAC097D00F90706 /* XCRemoteSwiftPackageReference "lz4-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/milch/lz4-spm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.9.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -6248,6 +6260,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E6AEBA212B95B6C4005E8433 /* XCRemoteSwiftPackageReference "OpenSSL" */;
 			productName = OpenSSL;
+		};
+		E6CB2E152BAC097D00F90706 /* lz4 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E6CB2E142BAC097D00F90706 /* XCRemoteSwiftPackageReference "lz4-spm" */;
+			productName = lz4;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
