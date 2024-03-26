@@ -48,6 +48,7 @@
 
 -(void) configureLayer:(CAMetalLayer *)layer withSize:(CGSize)size {
     _layer = layer;
+    _size = size;
     EmulationSession::GetInstance().SetNativeWindow((__bridge CA::MetalLayer*)layer, size);
 }
 
@@ -70,7 +71,13 @@
 }
 
 -(void) touchBeganAtPoint:(CGPoint)point index:(NSUInteger)index {
-    EmulationSession::GetInstance().Window().OnTouchPressed([[NSNumber numberWithUnsignedInteger:index] intValue], point.x, point.y);
+    float h_ratio, w_ratio;
+    h_ratio = EmulationSession::GetInstance().Window().GetFramebufferLayout().height / (_size.height * [[UIScreen mainScreen] nativeScale]);
+    w_ratio = EmulationSession::GetInstance().Window().GetFramebufferLayout().width / (_size.width * [[UIScreen mainScreen] nativeScale]);
+    
+    EmulationSession::GetInstance().Window().OnTouchPressed([[NSNumber numberWithUnsignedInteger:index] intValue],
+                                                            (point.x) * [[UIScreen mainScreen] nativeScale] * w_ratio,
+                                                            ((point.y) * [[UIScreen mainScreen] nativeScale] * h_ratio));
 }
 
 -(void) touchEndedForIndex:(NSUInteger)index {
@@ -78,7 +85,13 @@
 }
 
 -(void) touchMovedAtPoint:(CGPoint)point index:(NSUInteger)index {
-    EmulationSession::GetInstance().Window().OnTouchMoved([[NSNumber numberWithUnsignedInteger:index] intValue], point.x, point.y);
+    float h_ratio, w_ratio;
+    h_ratio = EmulationSession::GetInstance().Window().GetFramebufferLayout().height / (_size.height * [[UIScreen mainScreen] nativeScale]);
+    w_ratio = EmulationSession::GetInstance().Window().GetFramebufferLayout().width / (_size.width * [[UIScreen mainScreen] nativeScale]);
+    
+    EmulationSession::GetInstance().Window().OnTouchMoved([[NSNumber numberWithUnsignedInteger:index] intValue],
+                                                          (point.x) * [[UIScreen mainScreen] nativeScale] * w_ratio,
+                                                          ((point.y) * [[UIScreen mainScreen] nativeScale] * h_ratio));
 }
 
 -(void) thumbstickMoved:(VirtualControllerAnalogType)analog x:(CGFloat)x y:(CGFloat)y {
@@ -97,6 +110,8 @@
 }
 
 -(void) orientationChanged:(UIInterfaceOrientation)orientation with:(CAMetalLayer *)layer size:(CGSize)size {
+    _layer = layer;
+    _size = size;
     EmulationSession::GetInstance().Window().OnSurfaceChanged((__bridge CA::MetalLayer*)layer, size);
 }
 
